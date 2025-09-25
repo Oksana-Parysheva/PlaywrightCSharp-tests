@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Tests", "POC.Playwright.Tests\POC.Playwright.Tests.csproj", "{948DBD47-F561-4BD7-B167-615B39BB7E07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Core", "POC.Playwright.Core\POC.Playwright.Core.csproj", "{7BD6EFC7-9E57-4955-96B5-680AB1E72C47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Common", "POC.Playwright.Common\POC.Playwright.Common.csproj", "{2D7AADB9-17D6-4860-A28F-AF654A1680F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Specflow.Tests", "POC.Playwright.Specflow.Tests\POC.Playwright.Specflow.Tests.csproj", "{468F031D-7096-4912-BFE3-8C6AA134776B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Api", "POC.Playwright.Api\POC.Playwright.Api.csproj", "{376D0D31-2DD6-52E3-EDBA-15615E025588}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Api.Tests", "POC.Playwright.Api.Tests\POC.Playwright.Api.Tests.csproj", "{B381D7A4-F596-77C7-B0E6-6E61016BB42A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{948DBD47-F561-4BD7-B167-615B39BB7E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{948DBD47-F561-4BD7-B167-615B39BB7E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{948DBD47-F561-4BD7-B167-615B39BB7E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{948DBD47-F561-4BD7-B167-615B39BB7E07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BD6EFC7-9E57-4955-96B5-680AB1E72C47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BD6EFC7-9E57-4955-96B5-680AB1E72C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BD6EFC7-9E57-4955-96B5-680AB1E72C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BD6EFC7-9E57-4955-96B5-680AB1E72C47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D7AADB9-17D6-4860-A28F-AF654A1680F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D7AADB9-17D6-4860-A28F-AF654A1680F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D7AADB9-17D6-4860-A28F-AF654A1680F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D7AADB9-17D6-4860-A28F-AF654A1680F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{468F031D-7096-4912-BFE3-8C6AA134776B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{468F031D-7096-4912-BFE3-8C6AA134776B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{468F031D-7096-4912-BFE3-8C6AA134776B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{468F031D-7096-4912-BFE3-8C6AA134776B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {074F5EA9-0C86-4488-A328-8933CE345986}
+	EndGlobalSection
+EndGlobal
