@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Config\" />
+	  <Folder Include="Config\" />
+	  <Folder Include="Contexts\" />
   </ItemGroup>
 
 </Project>
