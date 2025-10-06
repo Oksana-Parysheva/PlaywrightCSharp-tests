@@ -1,21 +1,19 @@
-﻿using Microsoft.Playwright.NUnit;
+﻿using Microsoft.Playwright;
 using NUnit.Framework;
-using POC.Playwright.Core.Pages.Cart;
-using POC.Playwright.Core.Pages.Home;
-using POC.Playwright.Core.Pages.Product;
+using POC.Playwright.Pages.MobileShop.Cart;
+using POC.Playwright.Pages.MobileShop.Home;
+using POC.Playwright.Pages.MobileShop.Product;
 
 namespace POC.Playwright.Tests.Smoke
 {
     [Parallelizable(ParallelScope.Fixtures)]
     [TestFixture]
-    public class TestsToTest7 : PageTest
+    public class TestsToTest7 : BasePageTest
     {
-        [Test]
+        [Category("Cart")]
+        [Test(Description = "Verify product was added to a cart")]
         public async Task Test1()
         {
-            await Page.GotoAsync("https://www.demoblaze.com/");
-            await Page.SetViewportSizeAsync(1920, 1080);
-            
             var homePage = new HomePage(Page);
             await homePage.WaitForHomePageLoadedAsync();
             var inventoryItems = await homePage.GetProductCardsAsync();
@@ -31,15 +29,13 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            Assert.That(actualItem, Is.EqualTo(expectedItem));
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
 
-        [Test]
+        [Category("Cart")]
+        [Test(Description = "Verify product was added to a cart")]
         public async Task Test2()
         {
-            await Page.GotoAsync("https://www.demoblaze.com/");
-            await Page.SetViewportSizeAsync(1920, 1080);
-
             var homePage = new HomePage(Page);
             await homePage.WaitForHomePageLoadedAsync();
             var inventoryItems = await homePage.GetProductCardsAsync();
@@ -55,15 +51,13 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            Assert.That(actualItem, Is.EqualTo(expectedItem));
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
 
-        [Test]
+        [Category("Cart")]
+        [Test(Description = "Verify product was added to a cart")]
         public async Task Test3()
         {
-            await Page.GotoAsync("https://www.demoblaze.com/");
-            await Page.SetViewportSizeAsync(1920, 1080);
-
             var homePage = new HomePage(Page);
             await homePage.WaitForHomePageLoadedAsync();
             var inventoryItems = await homePage.GetProductCardsAsync();
@@ -79,15 +73,13 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            Assert.That(actualItem, Is.EqualTo(expectedItem));
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
 
-        [Test]
+        [Category("Cart")]
+        [Test(Description = "Verify product was added to a cart")]
         public async Task Test4()
         {
-            await Page.GotoAsync("https://www.demoblaze.com/");
-            await Page.SetViewportSizeAsync(1920, 1080);
-
             var homePage = new HomePage(Page);
             await homePage.WaitForHomePageLoadedAsync();
             var inventoryItems = await homePage.GetProductCardsAsync();
@@ -103,7 +95,7 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            Assert.That(actualItem, Is.EqualTo(expectedItem));
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
     }
 }

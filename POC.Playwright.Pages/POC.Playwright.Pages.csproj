@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Endpoints\" />
-    <Folder Include="Models\" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.55.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AdiPlanner\" />
   </ItemGroup>
 
 </Project>

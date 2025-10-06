@@ -1,23 +1,40 @@
 ﻿using Microsoft.Playwright;
-using POC.Playwright.Common.Enums;
 using POC.Playwright.Common.Extentions;
 using POC.Playwright.Core.Services;
 
 namespace POC.Playwright.Drivers
 {
-    public static class PlaywrightDriver
+    public class PlaywrightDriver : IDisposable
     {
         private static IPlaywright _playwright;
         private static IBrowser _browser;
         private static IBrowserContext _context;
         private static IPage _page;
+        private bool _isDisposed;
 
-        public static async Task<IPage> InitAsync()
+        public static IPage Page => _page;
+
+        public static IBrowserContext Context => _context;
+
+        public static IBrowser Browser => _browser;
+
+        public static async Task InitAsync(bool toInitContext = true, bool toInitPage = true)
+        {
+            await InitPlaywrightAsync();
+            await InitBrowserAsync();
+            if (toInitContext) await InitContextAsync();
+            if (toInitPage) await InitNewPageAsync();
+        }
+
+        private static async Task<IPlaywright> InitPlaywrightAsync()
         {
             var pwSettings = Environment.GetEnvironmentVariable("PW_INTERNAL_ADAPTER_SETTINGS").To<PWEnvironment>();
+            return _playwright ??= await Microsoft.Playwright.Playwright.CreateAsync();
+        }
 
-            _playwright ??= await Microsoft.Playwright.Playwright.CreateAsync();
-
+        private static async Task<IBrowser> InitBrowserAsync()
+        {
+            var pwSettings = Environment.GetEnvironmentVariable("PW_INTERNAL_ADAPTER_SETTINGS").To<PWEnvironment>();
             var options = new BrowserTypeLaunchOptions { Headless = pwSettings.LaunchOptions.Headless, SlowMo = pwSettings.LaunchOptions.SlowMo };
             _browser = pwSettings.BrowserName.ToLower() switch
             {
@@ -26,12 +43,14 @@ namespace POC.Playwright.Drivers
                 _ => await _playwright.Chromium.LaunchAsync(options)
             };
 
-            _context = await _browser.NewContextAsync();
-            _page = await _context.NewPageAsync();
-            return _page;
+            return _browser;
         }
 
-        public static IPage Page => _page;
+        public static async Task<IBrowserContext> InitContextAsync(BrowserNewContextOptions? options = null)
+            => _context = await _browser.NewContextAsync(options);
+
+        public static async Task<IPage> InitNewPageAsync()
+            => _page = await _context.NewPageAsync();
 
         public static async Task CloseAsync()
         {
@@ -44,6 +63,22 @@ namespace POC.Playwright.Drivers
             {
                 await _browser.CloseAsync();
             }
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed) return;
+
+            if (_browser != null)
+            {
+                Task.Run(async () =>
+                {
+                    await _browser.CloseAsync();
+                    await _browser.DisposeAsync();
+                });
+            }
+
+            _isDisposed = true;
         }
     }
 }
