@@ -416,3 +416,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+POC.Playwright.Tests/appsettings.local.json
+/POC.Playwright.Tests/playwright

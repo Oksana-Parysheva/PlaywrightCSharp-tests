@@ -11,9 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Common", "PO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Specflow.Tests", "POC.Playwright.Specflow.Tests\POC.Playwright.Specflow.Tests.csproj", "{468F031D-7096-4912-BFE3-8C6AA134776B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Api", "POC.Playwright.Api\POC.Playwright.Api.csproj", "{376D0D31-2DD6-52E3-EDBA-15615E025588}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Api", "POC.Playwright.Api\POC.Playwright.Api.csproj", "{45228505-9476-4393-8EC7-23AAD8D586F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Api.Tests", "POC.Playwright.Api.Tests\POC.Playwright.Api.Tests.csproj", "{B381D7A4-F596-77C7-B0E6-6E61016BB42A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Api.Tests", "POC.Playwright.Api.Tests\POC.Playwright.Api.Tests.csproj", "{99ECB58D-3415-498E-9A4A-675ADE0F2285}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.Playwright.Pages", "POC.Playwright.Pages\POC.Playwright.Pages.csproj", "{01811FD2-4A31-47F7-B9CD-931AA27A16E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +39,18 @@ Global
 		{468F031D-7096-4912-BFE3-8C6AA134776B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{468F031D-7096-4912-BFE3-8C6AA134776B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{468F031D-7096-4912-BFE3-8C6AA134776B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{376D0D31-2DD6-52E3-EDBA-15615E025588}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B381D7A4-F596-77C7-B0E6-6E61016BB42A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45228505-9476-4393-8EC7-23AAD8D586F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45228505-9476-4393-8EC7-23AAD8D586F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45228505-9476-4393-8EC7-23AAD8D586F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45228505-9476-4393-8EC7-23AAD8D586F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99ECB58D-3415-498E-9A4A-675ADE0F2285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99ECB58D-3415-498E-9A4A-675ADE0F2285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99ECB58D-3415-498E-9A4A-675ADE0F2285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99ECB58D-3415-498E-9A4A-675ADE0F2285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01811FD2-4A31-47F7-B9CD-931AA27A16E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01811FD2-4A31-47F7-B9CD-931AA27A16E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01811FD2-4A31-47F7-B9CD-931AA27A16E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01811FD2-4A31-47F7-B9CD-931AA27A16E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

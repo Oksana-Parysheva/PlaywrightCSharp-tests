@@ -6,9 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Endpoints\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Endpoints\" />
+		<Folder Include="Models\" />
+		<Folder Include="Helpers\" />
+		<Folder Include="Methods\" />
+	</ItemGroup>
 
 </Project>

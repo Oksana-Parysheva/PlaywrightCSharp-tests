@@ -1,6 +1,7 @@
-﻿using Microsoft.Playwright;
+﻿using System.Xml.Linq;
+using Microsoft.Playwright;
 
-namespace POC.Playwright.Core.Pages.Home
+namespace POC.Playwright.Pages.MobileShop.Home
 {
     public class HomePage
     {
