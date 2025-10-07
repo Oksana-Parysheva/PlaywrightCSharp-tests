@@ -2,7 +2,7 @@
 <RunSettings>
 	<!-- NUnit adapter -->
 	<NUnit>
-		<NumberOfTestWorkers>10</NumberOfTestWorkers>
+		<NumberOfTestWorkers>3</NumberOfTestWorkers>
 	</NUnit>
 	<!-- General run configuration -->
 	<RunConfiguration>
@@ -33,7 +33,6 @@
 			<HandleSIGTERM></HandleSIGTERM>,
 			<IgnoreAllDefaultArgs></IgnoreAllDefaultArgs>,
 			<IgnoreDefaultArgs></IgnoreDefaultArgs>,
-			<Proxy></Proxy>,
 			<Timeout></Timeout>,
 			<TracesDir></TracesDir>
 		</LaunchOptions>

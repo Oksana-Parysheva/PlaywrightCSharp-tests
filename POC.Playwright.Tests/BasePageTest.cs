@@ -1,44 +1,56 @@
 ﻿using Microsoft.Playwright;
+using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using POC.Playwright.Common.Config;
 using POC.Playwright.Common.EnvironmentHelper;
-using POC.Playwright.Drivers;
 using POC.Playwright.Pages.OktaLogin;
 using System.Text.RegularExpressions;
 
 namespace POC.Playwright.Tests
 {
-    public class BasePageTest
+    public class BasePageTest : PageTest
     {
         private string AppUrl = EnvironmentKeys.BaseUrl;
-        private IPage _page;
-        private IBrowserContext _context;
-        private IBrowser _browser;
+        private const string _relativeFilePath = "../../../playwright/.auth/state.json";
+        private const string _testArtifactsFolder = "TestArtifacts";
 
-        protected IPage Page => _page;
-        protected IBrowserContext Context => _context;
-        protected IBrowser Browser => _browser;
+        private string _fixtureName;
+        private string _testName;
 
-        [OneTimeSetUp]
-        public async Task InitializeDriver()
+        public override BrowserNewContextOptions ContextOptions()
         {
-            ConfigurationProvider.GetCurrent();
+            var browserOptions = new BrowserNewContextOptions
+            {
+                Locale = "en-US",
+                ColorScheme = ColorScheme.Light,
+                ViewportSize = new() { Width = 1920, Height = 1080 },
+                RecordVideoDir = $"{_testArtifactsFolder}/{_fixtureName}",
+                RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 }
+            };
+
             if (AppUrl.Contains("okta"))
             {
-                await PlaywrightDriver.InitAsync(false, false);
-                _browser = PlaywrightDriver.Browser;
+                if (File.Exists(_relativeFilePath))
+                {
+                    browserOptions.StorageStatePath = _relativeFilePath;
+                }
             }
-            else
-            {
-                await PlaywrightDriver.InitAsync();
-                _context = PlaywrightDriver.Context;
-                _page = PlaywrightDriver.Page;
-            }
+
+            return browserOptions;
+        }
+
+        [OneTimeSetUp]
+        public void InitializeDriver()
+        {
+            ConfigurationProvider.GetCurrent();
+            _fixtureName = TestContext.CurrentContext.Test.Name;
         }
 
         [SetUp]
         public async Task Setup()
         {
+            _testName = TestContext.CurrentContext.Test.Name;
+
             // login via OKTA
             if (AppUrl.Contains("okta"))
             {
@@ -46,39 +58,49 @@ namespace POC.Playwright.Tests
             }
             else
             {
-                await Page.SetViewportSizeAsync(1920, 1080);
                 await Page.GotoAsync(AppUrl);
+            }
+        }
+
+        [TearDown]
+        public async Task TearDown()
+        {
+            var status = TestContext.CurrentContext.Result.Outcome.Status;
+            var message = TestContext.CurrentContext.Result.Message;
+
+            if (status == NUnit.Framework.Interfaces.TestStatus.Failed)
+            {
+                string screenshotsDir = $"{_testArtifactsFolder}/{_fixtureName}";
+                Directory.CreateDirectory(screenshotsDir);
+
+                string screenshotPath = Path.Combine(screenshotsDir, $"{_testName} {DateTime.Now:yyyyMMdd_HHmmss}.png");
+                await Page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
+                TestContext.AddTestAttachment(screenshotPath, "Failure Screenshot");
+
+                if (Context != null)
+                {
+                    await Context.CloseAsync();
+                }
+
+                var videoPath = await Page.Video?.PathAsync();
+                if (!string.IsNullOrEmpty(videoPath))
+                {
+                    string videoFileName = Path.Combine(Directory.GetCurrentDirectory(), $"{_testArtifactsFolder}/{_fixtureName}", $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
+                    File.Move(videoPath, videoFileName, true);
+                    var newVideoPath = videoFileName;
+                    TestContext.AddTestAttachment(newVideoPath, "Test Video");
+                }
             }
         }
 
         private async Task LogiInViaOkta()
         {
-            var relativeFilePath = "../../../playwright/.auth/state.json";
-            if (!File.Exists(relativeFilePath))
-            {
-                _context = await PlaywrightDriver.InitContextAsync();
-                _page = await PlaywrightDriver.InitNewPageAsync();
-                await Page.SetViewportSizeAsync(1920, 1080);
-                await Page.GotoAsync(AppUrl);
-                await AuthenticateViaOktaAsync(relativeFilePath);
-            }
-            else
-            {
-                Console.WriteLine($"The file '{relativeFilePath}' exists.");
-                _context = await PlaywrightDriver.InitContextAsync(new()
-                {
-                    StorageStatePath = relativeFilePath
-                });
-
-                _page = await PlaywrightDriver.InitNewPageAsync();
-                await Page.SetViewportSizeAsync(1920, 1080);
-                await Page.GotoAsync(AppUrl);
-                var oktaPage = new OktaLoginPage(Page);
-                await AuthenticateViaOktaAsync(relativeFilePath);
-            }
+            Console.WriteLine($"The file '{_relativeFilePath}' exists.");
+            await Page.GotoAsync(AppUrl);
+            await AuthenticateViaOktaAsync();
         }
 
-        private async Task AuthenticateViaOktaAsync(string relativeFilePath)
+        private async Task AuthenticateViaOktaAsync()
         {
             var oktaPage = new OktaLoginPage(Page);
             if (await oktaPage.UsernameIsDisplayedAsync())
@@ -93,24 +115,9 @@ namespace POC.Playwright.Tests
                 // save context auth state
                 await Context.StorageStateAsync(new()
                 {
-                    Path = relativeFilePath
+                    Path = _relativeFilePath
                 });
             }
-        }
-
-        [TearDown]
-        public async Task TearDown()
-        {
-            if (_context != null)
-            {
-                await _context.CloseAsync();
-            }
-        }
-
-        [OneTimeTearDown]
-        public async Task Dispose()
-        {
-            await PlaywrightDriver.CloseAsync();
         }
     }
 }

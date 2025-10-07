@@ -12,7 +12,6 @@ namespace POC.Playwright.Tests.Smoke
         [Test]
         public async Task Test()
         {
-
             var homePage = new HomePage(Page);
             await homePage.WaitForHomePageLoadedAsync();
             var inventoryItems = await homePage.GetProductCardsAsync();
