@@ -14,7 +14,7 @@
 	<!-- Playwright -->
 	<Playwright>
 		<BrowserName>chromium</BrowserName>
-		<ExpectTimeout>0</ExpectTimeout>
+		<ExpectTimeout>5000</ExpectTimeout>
 		<Headless>false</Headless>,
 		<Retries>2</Retries>
 		<LaunchOptions>
@@ -33,7 +33,7 @@
 			<HandleSIGTERM></HandleSIGTERM>,
 			<IgnoreAllDefaultArgs></IgnoreAllDefaultArgs>,
 			<IgnoreDefaultArgs></IgnoreDefaultArgs>,
-			<Timeout></Timeout>,
+			<Timeout>5000</Timeout>,
 			<TracesDir></TracesDir>
 		</LaunchOptions>
 	</Playwright>

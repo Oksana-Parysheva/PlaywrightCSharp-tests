@@ -16,6 +16,7 @@ namespace POC.Playwright.Tests
 
         private string _fixtureName;
         private string _testName;
+        private List<string> passedVideoFiles = new List<string>();
 
         public override BrowserNewContextOptions ContextOptions()
         {
@@ -24,7 +25,7 @@ namespace POC.Playwright.Tests
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
                 ViewportSize = new() { Width = 1920, Height = 1080 },
-                RecordVideoDir = $"{_testArtifactsFolder}/{_fixtureName}",
+                RecordVideoDir = $"{_testArtifactsFolder}\\{_fixtureName}",
                 RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 }
             };
 
@@ -50,6 +51,13 @@ namespace POC.Playwright.Tests
         public async Task Setup()
         {
             _testName = TestContext.CurrentContext.Test.Name;
+            await Context.Tracing.StartAsync(new()
+            {
+                Title = $"{_fixtureName}.{_testName}",
+                Screenshots = true,
+                Snapshots = true,
+                Sources = true,
+            });
 
             // login via OKTA
             if (AppUrl.Contains("okta"))
@@ -68,6 +76,15 @@ namespace POC.Playwright.Tests
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var message = TestContext.CurrentContext.Result.Message;
 
+            var videoPath = await Page.Video?.PathAsync();
+            if (!string.IsNullOrEmpty(videoPath))
+            {
+                if (status == NUnit.Framework.Interfaces.TestStatus.Passed)
+                {
+                    passedVideoFiles.Add(videoPath);
+                }
+            }
+
             if (status == NUnit.Framework.Interfaces.TestStatus.Failed)
             {
                 string screenshotsDir = $"{_testArtifactsFolder}/{_fixtureName}";
@@ -77,19 +94,42 @@ namespace POC.Playwright.Tests
                 await Page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
                 TestContext.AddTestAttachment(screenshotPath, "Failure Screenshot");
 
+                var tracePath = Path.Combine(
+                        TestContext.CurrentContext.WorkDirectory,
+                        $"{_testArtifactsFolder}\\playwright-traces",
+                        $"{_fixtureName}.{_testName}.zip"
+                    );
+
+                await Context.Tracing.StopAsync(new()
+                {
+                    Path = tracePath
+                });
+                TestContext.AddTestAttachment(tracePath, "Trace log");
+
                 if (Context != null)
                 {
                     await Context.CloseAsync();
                 }
 
-                var videoPath = await Page.Video?.PathAsync();
+                var newVideoPath = string.Empty;
                 if (!string.IsNullOrEmpty(videoPath))
                 {
-                    string videoFileName = Path.Combine(Directory.GetCurrentDirectory(), $"{_testArtifactsFolder}/{_fixtureName}", $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
-                    File.Move(videoPath, videoFileName, true);
-                    var newVideoPath = videoFileName;
-                    TestContext.AddTestAttachment(newVideoPath, "Test Video");
+                    newVideoPath = Path.Combine(Directory.GetCurrentDirectory(), $"{_testArtifactsFolder}/{_fixtureName}", $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
+                    File.Move(videoPath, newVideoPath, true);
                 }
+
+                TestContext.AddTestAttachment(newVideoPath, "Test Video");
+            }
+
+            await Context.Tracing.StopAsync();
+        }
+
+        [OneTimeTearDown]
+        public async Task DeleteVideoFilesAsync()
+        {
+            foreach (var path in passedVideoFiles)
+            {
+                await TryDeleteVideoAsync(path);
             }
         }
 
@@ -117,6 +157,30 @@ namespace POC.Playwright.Tests
                 {
                     Path = _relativeFilePath
                 });
+            }
+        }
+
+        private async Task TryDeleteVideoAsync(string videoPath)
+        {
+            try
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        File.Delete(videoPath);
+                        Console.WriteLine($"Deleted video file: {videoPath}");
+                        return;
+                    }
+                    catch (IOException)
+                    {
+                        await Task.Delay(500);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not delete video: {ex.Message}");
             }
         }
     }

@@ -28,7 +28,8 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            //await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync("67876");
         }
 
         [Category("Cart")]
@@ -72,7 +73,8 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync("67876");
+            //await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
 
         [Category("Cart")]
