@@ -2,7 +2,7 @@
 <RunSettings>
 	<!-- NUnit adapter -->
 	<NUnit>
-		<NumberOfTestWorkers>3</NumberOfTestWorkers>
+		<NumberOfTestWorkers>6</NumberOfTestWorkers>
 	</NUnit>
 	<!-- General run configuration -->
 	<RunConfiguration>

@@ -142,6 +142,7 @@ namespace POC.Playwright.Tests
 
         private async Task AuthenticateViaOktaAsync()
         {
+            Thread.Sleep(7000);
             var oktaPage = new OktaLoginPage(Page);
             if (await oktaPage.UsernameIsDisplayedAsync())
             {
