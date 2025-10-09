@@ -1,7 +1,8 @@
-﻿using Microsoft.Playwright;
+﻿using AventStack.ExtentReports;
+using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
-using POC.Playwright.Common.Config;
+using NUnit.Framework.Interfaces;
 using POC.Playwright.Common.EnvironmentHelper;
 using POC.Playwright.Pages.OktaLogin;
 using System.Text.RegularExpressions;
@@ -43,14 +44,16 @@ namespace POC.Playwright.Tests
         [OneTimeSetUp]
         public void InitializeDriver()
         {
-            ConfigurationProvider.GetCurrent();
             _fixtureName = TestContext.CurrentContext.Test.Name;
+            TestRunSetup.CreateFeature(_fixtureName);
         }
 
         [SetUp]
         public async Task Setup()
         {
             _testName = TestContext.CurrentContext.Test.Name;
+            TestRunSetup.CreateTest(_testName);
+
             await Context.Tracing.StartAsync(new()
             {
                 Title = $"{_fixtureName}.{_testName}",
@@ -75,25 +78,31 @@ namespace POC.Playwright.Tests
         {
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var message = TestContext.CurrentContext.Result.Message;
+            TestRunSetup.BrowserDetails = $"{Path.GetFileNameWithoutExtension(Context.Browser.BrowserType.ExecutablePath)} v.{Context.Browser.Version}";
+
+            if (status == TestStatus.Passed)
+                TestRunSetup.LogToTest(Status.Pass, "Test passed ✅");
 
             var videoPath = await Page.Video?.PathAsync();
             if (!string.IsNullOrEmpty(videoPath))
             {
-                if (status == NUnit.Framework.Interfaces.TestStatus.Passed)
+                if (status == TestStatus.Passed)
                 {
                     passedVideoFiles.Add(videoPath);
                 }
             }
 
-            if (status == NUnit.Framework.Interfaces.TestStatus.Failed)
+            if (status == TestStatus.Failed)
             {
-                string screenshotsDir = $"{_testArtifactsFolder}/{_fixtureName}";
+
+                string screenshotsDir = Path.Combine(_testArtifactsFolder, _fixtureName);
                 Directory.CreateDirectory(screenshotsDir);
 
                 string screenshotPath = Path.Combine(screenshotsDir, $"{_testName} {DateTime.Now:yyyyMMdd_HHmmss}.png");
-                await Page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
+                var screenBytes = await Page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
                 TestContext.AddTestAttachment(screenshotPath, "Failure Screenshot");
 
+                
                 var tracePath = Path.Combine(
                         TestContext.CurrentContext.WorkDirectory,
                         $"{_testArtifactsFolder}\\playwright-traces",
@@ -106,6 +115,7 @@ namespace POC.Playwright.Tests
                 });
                 TestContext.AddTestAttachment(tracePath, "Trace log");
 
+
                 if (Context != null)
                 {
                     await Context.CloseAsync();
@@ -114,11 +124,13 @@ namespace POC.Playwright.Tests
                 var newVideoPath = string.Empty;
                 if (!string.IsNullOrEmpty(videoPath))
                 {
-                    newVideoPath = Path.Combine(Directory.GetCurrentDirectory(), $"{_testArtifactsFolder}/{_fixtureName}", $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
+                    newVideoPath = Path.Combine(Directory.GetCurrentDirectory(), $"{_testArtifactsFolder}\\{_fixtureName}", $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
                     File.Move(videoPath, newVideoPath, true);
                 }
 
                 TestContext.AddTestAttachment(newVideoPath, "Test Video");
+                var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, screenshotPath);
+                TestRunSetup.AttachTestArtifactsToTest(fullPath, newVideoPath, TestContext.CurrentContext.Result.StackTrace, TestContext.CurrentContext.Result.Message, Path.GetFileName(fullPath), Status.Fail);
             }
 
             await Context.Tracing.StopAsync();

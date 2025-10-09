@@ -21,7 +21,7 @@
 			<Headless>false</Headless>
 			<SlowMo>250</SlowMo>
 			<Args></Args>,
-			<Channel></Channel>,
+			<Channel>chrome</Channel>,
 			<ChromiumSandbox></ChromiumSandbox>,
 			<Devtools></Devtools>,
 			<DownloadsPath></DownloadsPath>,
