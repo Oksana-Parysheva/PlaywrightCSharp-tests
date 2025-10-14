@@ -11,45 +11,45 @@ namespace POC.Playwright.Tests
 {
     public class BasePageTest : PageTest
     {
-        private string AppUrl = EnvironmentKeys.BaseUrl;
-        private const string _relativeFilePath = "../../../playwright/.auth/state.json";
-        private const string _testArtifactsFolder = "TestArtifacts";
+        private const string _authStateFilePath = "../../../playwright/.auth/state.json";
+        private const string _artifactsFolder = "TestArtifacts";
+        private string _appUrl = EnvironmentKeys.BaseUrl;
 
-        private string _fixtureName;
-        private string _testName;
-        private List<string> passedVideoFiles = new List<string>();
+        private string _fixtureName = string.Empty;
+        private string _testName = string.Empty;
+        private string _screenshotPath = string.Empty;
+        private string _videoPath = string.Empty;
+        private string _newVideoPath = string.Empty;
+        private List<string> _passedVideoFiles = new();
 
         public override BrowserNewContextOptions ContextOptions()
         {
-            var browserOptions = new BrowserNewContextOptions
+            var options = new BrowserNewContextOptions
             {
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
                 ViewportSize = new() { Width = 1920, Height = 1080 },
-                RecordVideoDir = $"{_testArtifactsFolder}\\{_fixtureName}",
+                RecordVideoDir = Path.Combine(_artifactsFolder, _fixtureName),
                 RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 }
             };
 
-            if (AppUrl.Contains("okta"))
+            if (_appUrl.Contains("okta", StringComparison.OrdinalIgnoreCase) && File.Exists(_authStateFilePath))
             {
-                if (File.Exists(_relativeFilePath))
-                {
-                    browserOptions.StorageStatePath = _relativeFilePath;
-                }
+                options.StorageStatePath = _authStateFilePath;
             }
 
-            return browserOptions;
+            return options;
         }
 
         [OneTimeSetUp]
-        public void InitializeDriver()
+        public void SetupFixture()
         {
             _fixtureName = TestContext.CurrentContext.Test.Name;
             TestRunSetup.CreateFeature(_fixtureName);
         }
 
         [SetUp]
-        public async Task Setup()
+        public async Task SetupAsync()
         {
             _testName = TestContext.CurrentContext.Test.Name;
             TestRunSetup.CreateTest(_testName);
@@ -63,113 +63,130 @@ namespace POC.Playwright.Tests
             });
 
             // login via OKTA
-            if (AppUrl.Contains("okta"))
+            if (_appUrl.Contains("okta"))
             {
                 await LogiInViaOkta();
             }
             else
             {
-                await Page.GotoAsync(AppUrl);
+                await Page.GotoAsync(_appUrl);
             }
         }
 
         [TearDown]
-        public async Task TearDown()
+        public async Task TearDownAsync()
         {
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var message = TestContext.CurrentContext.Result.Message;
             TestRunSetup.BrowserDetails = $"{Path.GetFileNameWithoutExtension(Context.Browser.BrowserType.ExecutablePath)} v.{Context.Browser.Version}";
 
             if (status == TestStatus.Passed)
-                TestRunSetup.LogToTest(Status.Pass, "Test passed ✅");
-
-            var videoPath = await Page.Video?.PathAsync();
-            if (!string.IsNullOrEmpty(videoPath))
             {
-                if (status == TestStatus.Passed)
-                {
-                    passedVideoFiles.Add(videoPath);
-                }
+                TestRunSetup.LogToTest(Status.Pass, "Test passed ✅");
+            }
+
+            _videoPath = await Page.Video?.PathAsync();
+            if (!string.IsNullOrEmpty(_videoPath) && status == TestStatus.Passed)
+            {
+                _passedVideoFiles.Add(_videoPath);
             }
 
             if (status == TestStatus.Failed)
             {
-
-                string screenshotsDir = Path.Combine(_testArtifactsFolder, _fixtureName);
-                Directory.CreateDirectory(screenshotsDir);
-
-                string screenshotPath = Path.Combine(screenshotsDir, $"{_testName} {DateTime.Now:yyyyMMdd_HHmmss}.png");
-                var screenBytes = await Page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
-                TestContext.AddTestAttachment(screenshotPath, "Failure Screenshot");
-
-                
-                var tracePath = Path.Combine(
-                        TestContext.CurrentContext.WorkDirectory,
-                        $"{_testArtifactsFolder}\\playwright-traces",
-                        $"{_fixtureName}.{_testName}.zip"
-                    );
-
-                await Context.Tracing.StopAsync(new()
-                {
-                    Path = tracePath
-                });
-                TestContext.AddTestAttachment(tracePath, "Trace log");
-
-
-                if (Context != null)
-                {
-                    await Context.CloseAsync();
-                }
-
-                var newVideoPath = string.Empty;
-                if (!string.IsNullOrEmpty(videoPath))
-                {
-                    newVideoPath = Path.Combine(Directory.GetCurrentDirectory(), $"{_testArtifactsFolder}\\{_fixtureName}", $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
-                    File.Move(videoPath, newVideoPath, true);
-                }
-
-                TestContext.AddTestAttachment(newVideoPath, "Test Video");
-                var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, screenshotPath);
-                TestRunSetup.AttachTestArtifactsToTest(fullPath, newVideoPath, TestContext.CurrentContext.Result.StackTrace, TestContext.CurrentContext.Result.Message, Path.GetFileName(fullPath), Status.Fail);
+                await HandleFailureTestAsync();
             }
 
             await Context.Tracing.StopAsync();
         }
 
         [OneTimeTearDown]
-        public async Task DeleteVideoFilesAsync()
+        public async Task CleanupVideoAsync()
         {
-            foreach (var path in passedVideoFiles)
+            foreach (var path in _passedVideoFiles)
             {
                 await TryDeleteVideoAsync(path);
             }
+
+            if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed)
+            {
+                CleanupTestArtifactsFolder(Path.Combine(TestContext.CurrentContext.WorkDirectory, _artifactsFolder, _fixtureName));
+            }
+        }
+
+        public async Task HandleFailureTestAsync()
+        {
+            await AttachScreenshotAsync();
+            await AttachTraceLogsAsync();
+            await AttachVideoAsync();
+
+            var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _screenshotPath);
+            TestRunSetup.AttachTestArtifactsToReport(fullPath, _newVideoPath, TestContext.CurrentContext.Result, Path.GetFileName(fullPath), Status.Fail);
+        }
+
+        private async Task AttachScreenshotAsync()
+        {
+            string screenshotsDir = Path.Combine(_artifactsFolder, _fixtureName);
+            Directory.CreateDirectory(screenshotsDir);
+
+            _screenshotPath = Path.Combine(screenshotsDir, $"{_testName} {DateTime.Now:yyyyMMdd_HHmmss}.png");
+            var screenBytes = await Page.ScreenshotAsync(new PageScreenshotOptions { Path = _screenshotPath, FullPage = true });
+            TestContext.AddTestAttachment(_screenshotPath, "Failure Screenshot");
+        }
+
+        private async Task AttachTraceLogsAsync()
+        {
+            var tracePath = Path.Combine(
+                    TestContext.CurrentContext.WorkDirectory,
+                    _artifactsFolder, "playwright-traces",
+                    $"{_fixtureName}.{_testName}.zip"
+                );
+
+            await Context.Tracing.StopAsync(new()
+            {
+                Path = tracePath
+            });
+            TestContext.AddTestAttachment(tracePath, "Trace log");
+        }
+
+        private async Task AttachVideoAsync()
+        {
+            if (Context != null)
+            {
+                await Context.CloseAsync();
+            }
+
+            _newVideoPath = string.Empty;
+            if (!string.IsNullOrEmpty(_videoPath))
+            {
+                _newVideoPath = Path.Combine(Directory.GetCurrentDirectory(), _artifactsFolder, _fixtureName, $"{_testName}_{DateTime.Now:yyyyMMdd_HHmmss}.webm");
+                File.Move(_videoPath, _newVideoPath, true);
+            }
+
+            TestContext.AddTestAttachment(_newVideoPath, "Test Video");
         }
 
         private async Task LogiInViaOkta()
         {
-            Console.WriteLine($"The file '{_relativeFilePath}' exists.");
-            await Page.GotoAsync(AppUrl);
+            Console.WriteLine($"The file '{_authStateFilePath}' exists.");
+            await Page.GotoAsync(_appUrl);
             await AuthenticateViaOktaAsync();
         }
 
         private async Task AuthenticateViaOktaAsync()
         {
-            Thread.Sleep(7000);
+            //Thread.Sleep(7000);
             var oktaPage = new OktaLoginPage(Page);
             if (await oktaPage.UsernameIsDisplayedAsync())
             {
                 Console.WriteLine($"User was not authenticated to an application");
-
                 // login via OKTA
                 await oktaPage.SignInAsync(EnvironmentKeys.Username, EnvironmentKeys.Password);
-                var urlPattern = @$"{AppUrl}app/UserHome(.+)?";
+
+                var urlPattern = @$"{_appUrl}app/UserHome(.+)?";
                 await Page.WaitForURLAsync(new Regex(urlPattern), new PageWaitForURLOptions { WaitUntil = WaitUntilState.Load });
 
                 // save context auth state
-                await Context.StorageStateAsync(new()
-                {
-                    Path = _relativeFilePath
-                });
+                await Context.StorageStateAsync(new() { Path = _authStateFilePath });
             }
         }
 
@@ -196,5 +213,8 @@ namespace POC.Playwright.Tests
                 Console.WriteLine($"Could not delete video: {ex.Message}");
             }
         }
+
+        private void CleanupTestArtifactsFolder(string pathToFixtureFolder)
+            => Directory.Delete(pathToFixtureFolder, true);
     }
 }

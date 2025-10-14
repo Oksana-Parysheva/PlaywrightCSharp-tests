@@ -2,8 +2,11 @@
 <RunSettings>
 	<!-- NUnit adapter -->
 	<NUnit>
-		<NumberOfTestWorkers>1</NumberOfTestWorkers>
+		<NumberOfTestWorkers>5</NumberOfTestWorkers>
 	</NUnit>
+	<ReportPortal>
+		<ConfigFile>reportportal.config.json</ConfigFile>
+	</ReportPortal>
 	<!-- General run configuration -->
 	<RunConfiguration>
 		<EnvironmentVariables>

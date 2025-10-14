@@ -43,5 +43,13 @@ namespace POC.Playwright.Specflow.Tests.Steps
             var actualItem = await _pageService.CartPage.GetCartItemNameAsync();
             Assert.That(actualItem, Is.EqualTo(expectedItem));
         }
+
+        [Then("product has wrong name displayed in the cart")]
+        public async Task ThenProductHasWrongNameDisplayedInTheCart()
+        {
+            var expectedItem = _scenarioContext.Get<string>(expectedItemKey);
+            var actualItem = await _pageService.CartPage.GetCartItemNameAsync();
+            Assert.That(actualItem, Is.EqualTo("5675757"));
+        }
     }
 }

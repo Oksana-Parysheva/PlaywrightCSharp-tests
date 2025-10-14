@@ -4,14 +4,14 @@ using POC.Playwright.Pages.MobileShop.Cart;
 using POC.Playwright.Pages.MobileShop.Home;
 using POC.Playwright.Pages.MobileShop.Product;
 
-namespace POC.Playwright.Tests.Smoke
+namespace POC.Playwright.Tests.Example.Smoke
 {
     [Category("ShoppingCart")]
     [TestFixture]
-    public class TestsToTest2 : BasePageTest
+    public class TestsToTest1 : BasePageTest
     {
         [Category("Cart")]
-        [Test(Description = "Verify product was added to a cart")]
+        [Test(Description = "Verify product was added to a cart. Test1")]
         public async Task Test1()
         {
             var homePage = new HomePage(Page);
@@ -33,7 +33,7 @@ namespace POC.Playwright.Tests.Smoke
         }
 
         [Category("Cart")]
-        [Test(Description = "Verify product was added to a cart")]
+        [Test(Description = "Verify product was added to a cart. Test2")]
         public async Task Test2()
         {
             var homePage = new HomePage(Page);
@@ -55,7 +55,7 @@ namespace POC.Playwright.Tests.Smoke
         }
 
         [Category("Cart")]
-        [Test(Description = "Verify product was added to a cart")]
+        [Test(Description = "Verify product was added to a cart. Test3")]
         public async Task Test3()
         {
             var homePage = new HomePage(Page);
@@ -77,7 +77,7 @@ namespace POC.Playwright.Tests.Smoke
         }
 
         [Category("Cart")]
-        [Test(Description = "Verify product was added to a cart")]
+        [Test(Description = "Verify product was added to a cart. Test4")]
         public async Task Test4()
         {
             var homePage = new HomePage(Page);

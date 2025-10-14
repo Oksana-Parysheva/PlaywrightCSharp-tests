@@ -4,11 +4,11 @@ using POC.Playwright.Pages.MobileShop.Cart;
 using POC.Playwright.Pages.MobileShop.Home;
 using POC.Playwright.Pages.MobileShop.Product;
 
-namespace POC.Playwright.Tests.Smoke
+namespace POC.Playwright.Tests.Example.Smoke
 {
     [Category("ShoppingCart")]
     [TestFixture]
-    public class TestsToTest2 : BasePageTest
+    public class TestsToTest4 : BasePageTest
     {
         [Category("Cart")]
         [Test(Description = "Verify product was added to a cart")]

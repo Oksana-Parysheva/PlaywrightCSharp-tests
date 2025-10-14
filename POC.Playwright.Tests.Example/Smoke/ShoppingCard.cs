@@ -4,13 +4,14 @@ using POC.Playwright.Pages.MobileShop.Cart;
 using POC.Playwright.Pages.MobileShop.Home;
 using POC.Playwright.Pages.MobileShop.Product;
 
-namespace POC.Playwright.Tests.Smoke
+namespace POC.Playwright.Tests.Example.Smoke
 {
     [Category("ShoppingCart")]
     [TestFixture]
     public class ShoppingCard : BasePageTest
     {
         [Test]
+        [Description("this is description for ShoppingCard.Test2")]
         public async Task Test2()
         {
             //TestRunSetup.StepInfo("Open shop main page");
@@ -37,6 +38,7 @@ namespace POC.Playwright.Tests.Smoke
         }
 
         [Test]
+        [Description("this is description for ShoppingCard.Test1")]
         public async Task Test1()
         {
             //TestRunSetup.StepInfo("Open shop main page");

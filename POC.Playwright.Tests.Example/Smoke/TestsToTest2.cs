@@ -4,7 +4,7 @@ using POC.Playwright.Pages.MobileShop.Cart;
 using POC.Playwright.Pages.MobileShop.Home;
 using POC.Playwright.Pages.MobileShop.Product;
 
-namespace POC.Playwright.Tests.Smoke
+namespace POC.Playwright.Tests.Example.Smoke
 {
     [Category("ShoppingCart")]
     [TestFixture]

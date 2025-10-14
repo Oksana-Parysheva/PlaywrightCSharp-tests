@@ -7,17 +7,21 @@ using POC.Playwright.Specflow.Tests.Pages;
 using POC.Playwright.Specflow.Tests.Services;
 using POC.Playwright.Specflow.Tests.Settings;
 using POC.Playwright.Specflow.Tests.Steps;
+using POC.Playwright.Specflow.Tests.Hooks;
 
 namespace POC.Playwright.Specflow.Tests
 {
     public static class TestStartup
     {
+        private static string _testArtifactsFolder = "TestArtifacts";
+
         [ScenarioDependencies]
         public static void CreateServices(ContainerBuilder builder)
         {
             builder.RegisterConfiguration();
             builder.RegisterPlaywright();
             builder.RegisterAppSettings();
+            builder.RegisterHooks();
             builder.RegisterPages();
             builder.RegisterPagesHandler();
             builder.RegisterPageDependencyService();
@@ -61,7 +65,18 @@ namespace POC.Playwright.Specflow.Tests
                     Headless = false,
                     SlowMo = 200
                 }).ConfigureAwait(false);
-                return await browser.NewPageAsync().ConfigureAwait(false);
+
+                var browserOptions = new BrowserNewContextOptions
+                {
+                    Locale = "en-US",
+                    ColorScheme = ColorScheme.Light,
+                    ViewportSize = new() { Width = 1920, Height = 1080 },
+                    RecordVideoDir = $"{_testArtifactsFolder}",
+                    RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 }
+                };
+
+                var context = await browser.NewContextAsync(browserOptions).ConfigureAwait(false);
+                return await context.NewPageAsync().ConfigureAwait(false);
             }).As<Task<IPage>>().InstancePerDependency();
         }
 
@@ -80,6 +95,11 @@ namespace POC.Playwright.Specflow.Tests
         private static void RegisterPageDependencyService(this ContainerBuilder builder)
         {
             builder.RegisterType<PageDependencyService>().As<IPageDependencyService>().InstancePerLifetimeScope();
+        }
+
+        private static void RegisterHooks(this ContainerBuilder builder)
+        {
+            builder.RegisterType<TestFixture>().AsSelf().InstancePerLifetimeScope();
         }
     }
 }

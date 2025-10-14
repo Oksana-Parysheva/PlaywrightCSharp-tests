@@ -6,6 +6,7 @@ using POC.Playwright.Pages.MobileShop.Product;
 
 namespace POC.Playwright.Tests.Smoke
 {
+    [Category("ShoppingCart")]
     [TestFixture]
     public class TestsToTest4 : BasePageTest
     {

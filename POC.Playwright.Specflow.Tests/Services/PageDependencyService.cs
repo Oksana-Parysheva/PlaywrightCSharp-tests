@@ -5,13 +5,6 @@ using Reqnroll;
 
 namespace POC.Playwright.Specflow.Tests.Services
 {
-    public interface IPageDependencyService
-    {
-        Task<IPage> Page { get; }
-        IOptions<AppSettings> AppSettings { get; }
-        ScenarioContext ScenarioContext { get; }
-    }
-
     public class PageDependencyService : IPageDependencyService, IDisposable
     {
         public PageDependencyService(Task<IPage> page, IOptions<AppSettings> appSettings, ScenarioContext scenarioContext)
@@ -31,5 +24,4 @@ namespace POC.Playwright.Specflow.Tests.Services
         public IOptions<AppSettings> AppSettings { get; }
         public ScenarioContext ScenarioContext { get; }
     }
-
 }

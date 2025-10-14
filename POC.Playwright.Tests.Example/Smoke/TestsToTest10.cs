@@ -4,11 +4,11 @@ using POC.Playwright.Pages.MobileShop.Cart;
 using POC.Playwright.Pages.MobileShop.Home;
 using POC.Playwright.Pages.MobileShop.Product;
 
-namespace POC.Playwright.Tests.Smoke
+namespace POC.Playwright.Tests.Example.Smoke
 {
     [Category("ShoppingCart")]
     [TestFixture]
-    public class TestsToTest2 : BasePageTest
+    public class TestsToTest10 : BasePageTest
     {
         [Category("Cart")]
         [Test(Description = "Verify product was added to a cart")]
@@ -29,7 +29,8 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            //await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync("67876");
         }
 
         [Category("Cart")]
@@ -73,7 +74,8 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync("67876");
+            //await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
 
         [Category("Cart")]
