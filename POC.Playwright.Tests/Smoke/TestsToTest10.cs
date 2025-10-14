@@ -6,7 +6,7 @@ using POC.Playwright.Pages.MobileShop.Product;
 
 namespace POC.Playwright.Tests.Smoke
 {
-    [Parallelizable(ParallelScope.Fixtures)]
+    [Category("ShoppingCart")]
     [TestFixture]
     public class TestsToTest10 : BasePageTest
     {
@@ -29,7 +29,8 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            //await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync("67876");
         }
 
         [Category("Cart")]
@@ -73,7 +74,8 @@ namespace POC.Playwright.Tests.Smoke
             await cartPage.WaitForCartTableAsync();
             var actualItem = await cartPage.GetCartItemNameAsync();
 
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync("67876");
+            //await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
         }
 
         [Category("Cart")]

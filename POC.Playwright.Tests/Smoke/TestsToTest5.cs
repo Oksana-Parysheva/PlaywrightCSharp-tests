@@ -6,7 +6,7 @@ using POC.Playwright.Pages.MobileShop.Product;
 
 namespace POC.Playwright.Tests.Smoke
 {
-    [Parallelizable(ParallelScope.Fixtures)]
+    [Category("ShoppingCart")]
     [TestFixture]
     public class TestsToTest5 : BasePageTest
     {

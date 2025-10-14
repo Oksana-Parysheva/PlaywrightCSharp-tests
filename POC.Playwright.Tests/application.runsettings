@@ -2,7 +2,7 @@
 <RunSettings>
 	<!-- NUnit adapter -->
 	<NUnit>
-		<NumberOfTestWorkers>10</NumberOfTestWorkers>
+		<NumberOfTestWorkers>1</NumberOfTestWorkers>
 	</NUnit>
 	<!-- General run configuration -->
 	<RunConfiguration>
@@ -14,14 +14,14 @@
 	<!-- Playwright -->
 	<Playwright>
 		<BrowserName>chromium</BrowserName>
-		<ExpectTimeout>0</ExpectTimeout>
+		<ExpectTimeout>5000</ExpectTimeout>
 		<Headless>false</Headless>,
 		<Retries>2</Retries>
 		<LaunchOptions>
 			<Headless>false</Headless>
 			<SlowMo>250</SlowMo>
 			<Args></Args>,
-			<Channel></Channel>,
+			<Channel>chrome</Channel>,
 			<ChromiumSandbox></ChromiumSandbox>,
 			<Devtools></Devtools>,
 			<DownloadsPath></DownloadsPath>,
@@ -33,8 +33,7 @@
 			<HandleSIGTERM></HandleSIGTERM>,
 			<IgnoreAllDefaultArgs></IgnoreAllDefaultArgs>,
 			<IgnoreDefaultArgs></IgnoreDefaultArgs>,
-			<Proxy></Proxy>,
-			<Timeout></Timeout>,
+			<Timeout>5000</Timeout>,
 			<TracesDir></TracesDir>
 		</LaunchOptions>
 	</Playwright>

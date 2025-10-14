@@ -418,3 +418,4 @@ FodyWeavers.xsd
 *.msp
 POC.Playwright.Tests/appsettings.local.json
 /POC.Playwright.Tests/playwright
+/POC.Playwright.Tests.Example/appsettings.local.json

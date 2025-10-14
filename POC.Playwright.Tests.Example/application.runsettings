@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+	<!-- NUnit adapter -->
+	<NUnit>
+		<NumberOfTestWorkers>5</NumberOfTestWorkers>
+	</NUnit>
+	<ReportPortal>
+		<ConfigFile>reportportal.config.json</ConfigFile>
+	</ReportPortal>
+	<!-- General run configuration -->
+	<RunConfiguration>
+		<EnvironmentVariables>
+			<!-- For debugging selectors, it's recommend to set the following environment variable -->
+			<DEBUG>pw:api</DEBUG>
+		</EnvironmentVariables>
+	</RunConfiguration>
+	<!-- Playwright -->
+	<Playwright>
+		<BrowserName>chromium</BrowserName>
+		<ExpectTimeout>5000</ExpectTimeout>
+		<Headless>false</Headless>,
+		<Retries>2</Retries>
+		<LaunchOptions>
+			<Headless>false</Headless>
+			<SlowMo>250</SlowMo>
+			<Args></Args>,
+			<Channel>chrome</Channel>,
+			<ChromiumSandbox></ChromiumSandbox>,
+			<Devtools></Devtools>,
+			<DownloadsPath></DownloadsPath>,
+			<Env></Env>,
+			<ExecutablePath></ExecutablePath>,
+			<FirefoxUserPrefs></FirefoxUserPrefs>,
+			<HandleSIGHUP></HandleSIGHUP>,
+			<HandleSIGINT></HandleSIGINT>,
+			<HandleSIGTERM></HandleSIGTERM>,
+			<IgnoreAllDefaultArgs></IgnoreAllDefaultArgs>,
+			<IgnoreDefaultArgs></IgnoreDefaultArgs>,
+			<Timeout>5000</Timeout>,
+			<TracesDir></TracesDir>
+		</LaunchOptions>
+	</Playwright>
+</RunSettings>

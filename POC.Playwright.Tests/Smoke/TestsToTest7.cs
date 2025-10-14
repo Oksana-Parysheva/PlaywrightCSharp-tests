@@ -6,7 +6,6 @@ using POC.Playwright.Pages.MobileShop.Product;
 
 namespace POC.Playwright.Tests.Smoke
 {
-    [Parallelizable(ParallelScope.Fixtures)]
     [TestFixture]
     public class TestsToTest7 : BasePageTest
     {

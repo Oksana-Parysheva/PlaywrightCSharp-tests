@@ -21,9 +21,12 @@ namespace POC.Playwright.Pages.OktaLogin
             await _page.FillAsync(_usernameInputLocator, username);
             await _page.FillAsync(_passwordInputLocator, password);
             await _page.ClickAsync(_signInButtonLocator);
-
+            Thread.Sleep(2000);
             // click Select to send push
-            await _page.ClickAsync(_selectSendPushButtonLocator);
+            if (await _page.Locator(_selectSendPushButtonLocator).IsVisibleAsync())
+            {
+                await _page.ClickAsync(_selectSendPushButtonLocator);
+            }
 
             Thread.Sleep(5000);
             //do

@@ -5,13 +5,8 @@ using POC.Playwright.Pages;
 namespace POC.Playwright.Tests.LoginWithOkta
 {
     [TestFixture]
-    public class Login : BasePageTest
+    public class Login1 : BasePageTest
     {
-        [SetUp]
-        public async Task Setup()
-        {
-        }
-
         [Test]
         public async Task LoginViaOktaTest1Async()
         {
