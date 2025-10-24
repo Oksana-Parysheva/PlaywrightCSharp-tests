@@ -2,7 +2,7 @@
 <RunSettings>
 	<!-- NUnit adapter -->
 	<NUnit>
-		<NumberOfTestWorkers>5</NumberOfTestWorkers>
+		<NumberOfTestWorkers>1</NumberOfTestWorkers>
 	</NUnit>
 	<ReportPortal>
 		<ConfigFile>reportportal.config.json</ConfigFile>

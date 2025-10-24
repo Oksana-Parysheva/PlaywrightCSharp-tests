@@ -1,19 +1,28 @@
-﻿using AventStack.ExtentReports;
+﻿using Allure.Net.Commons;
+using Allure.NUnit;
+using Allure.NUnit.Attributes;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using POC.Playwright.Common.EnvironmentHelper;
+using POC.Playwright.Core.Logging;
 using POC.Playwright.Pages.OktaLogin;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Status = AventStack.ExtentReports.Status;
 
 namespace POC.Playwright.Tests
 {
-    public class BasePageTest : PageTest
+    [AllureNUnit]
+    public abstract partial class BasePageTest : PageTest
     {
+        protected AllureReport Report { get; private set; }
         private const string _authStateFilePath = "../../../playwright/.auth/state.json";
         private const string _artifactsFolder = "TestArtifacts";
         private string _appUrl = EnvironmentKeys.BaseUrl;
+        private readonly string _allureAttachmentsDir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "allure-results");
+        private readonly PlaywrightLogCollector _pwApiLogCollector = new();
 
         private string _fixtureName = string.Empty;
         private string _testName = string.Empty;
@@ -41,6 +50,7 @@ namespace POC.Playwright.Tests
             return options;
         }
 
+        [AllureBefore("Before feature")]
         [OneTimeSetUp]
         public void SetupFixture()
         {
@@ -48,11 +58,16 @@ namespace POC.Playwright.Tests
             TestRunSetup.CreateFeature(_fixtureName);
         }
 
+        [AllureBefore("Setup before test")]
         [SetUp]
         public async Task SetupAsync()
         {
+            Report = new AllureReport();
             _testName = TestContext.CurrentContext.Test.Name;
             TestRunSetup.CreateTest(_testName);
+
+            _pwApiLogCollector.StartCapturingApiLogs();
+            PlaywrightConsoleLogger.AttachToPage(Page, _testName);
 
             await Context.Tracing.StartAsync(new()
             {
@@ -73,12 +88,19 @@ namespace POC.Playwright.Tests
             }
         }
 
+        [AllureAfter("TearDown after test")]
         [TearDown]
         public async Task TearDownAsync()
         {
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var message = TestContext.CurrentContext.Result.Message;
             TestRunSetup.BrowserDetails = $"{Path.GetFileNameWithoutExtension(Context.Browser.BrowserType.ExecutablePath)} v.{Context.Browser.Version}";
+
+            var apiLog = _pwApiLogCollector.StopAndSaveApiLogs(_testName, _allureAttachmentsDir);
+            if (apiLog != null)
+                AllureApi.AddAttachment("Playwright API Logs", "text/plain", apiLog);
+
+            PlaywrightConsoleLogger.Clear(_testName);
 
             if (status == TestStatus.Passed)
             {
@@ -95,10 +117,13 @@ namespace POC.Playwright.Tests
             {
                 await HandleFailureTestAsync();
             }
-
-            await Context.Tracing.StopAsync();
+            else
+            {
+                await Context.Tracing.StopAsync();
+            }
         }
 
+        [AllureAfter("TearDown after feature")]
         [OneTimeTearDown]
         public async Task CleanupVideoAsync()
         {
@@ -130,6 +155,8 @@ namespace POC.Playwright.Tests
 
             _screenshotPath = Path.Combine(screenshotsDir, $"{_testName} {DateTime.Now:yyyyMMdd_HHmmss}.png");
             var screenBytes = await Page.ScreenshotAsync(new PageScreenshotOptions { Path = _screenshotPath, FullPage = true });
+            //AllureApi.AddScreenDiff(_screenshotPath, "actual.png", "diff.png");
+            AllureApi.AddAttachment(_screenshotPath, "Failure Screenshot");
             TestContext.AddTestAttachment(_screenshotPath, "Failure Screenshot");
         }
 
@@ -145,6 +172,8 @@ namespace POC.Playwright.Tests
             {
                 Path = tracePath
             });
+
+            AllureApi.AddAttachment(tracePath, "Trace log");
             TestContext.AddTestAttachment(tracePath, "Trace log");
         }
 
@@ -162,6 +191,7 @@ namespace POC.Playwright.Tests
                 File.Move(_videoPath, _newVideoPath, true);
             }
 
+            AllureApi.AddAttachment(_newVideoPath, "Video");
             TestContext.AddTestAttachment(_newVideoPath, "Test Video");
         }
 
@@ -176,7 +206,7 @@ namespace POC.Playwright.Tests
         {
             //Thread.Sleep(7000);
             var oktaPage = new OktaLoginPage(Page);
-            if (await oktaPage.UsernameIsDisplayedAsync())
+            if (await oktaPage.UsernameTextbox.IsVisibleAsync())
             {
                 Console.WriteLine($"User was not authenticated to an application");
                 // login via OKTA

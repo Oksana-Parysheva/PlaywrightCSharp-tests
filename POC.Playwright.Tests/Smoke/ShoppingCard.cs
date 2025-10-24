@@ -1,54 +1,42 @@
-﻿using Microsoft.Playwright;
+﻿using Allure.NUnit.Attributes;
 using NUnit.Framework;
-using POC.Playwright.Pages.MobileShop.Cart;
-using POC.Playwright.Pages.MobileShop.Home;
-using POC.Playwright.Pages.MobileShop.Product;
 
 namespace POC.Playwright.Tests.Smoke
 {
+    [AllureFeature("Shopping cart features")]
     [Category("ShoppingCart")]
     [TestFixture]
-    public class ShoppingCard : BasePageTest
+    public class ShoppingCard : SharedSteps
     {
-        [Test]
-        public async Task Test2()
+        [Category("Cart")]
+        [Test(Description = "Verify product was added to a cart")]
+        [AllureName("AllureTest. Add product to cart")]
+        public async Task AllureTest()
         {
-            var homePage = new HomePage(Page);
-            await homePage.WaitForHomePageLoadedAsync();
-            var inventoryItems = await homePage.GetProductCardsAsync();
-            var rndIndex = new Random().Next(inventoryItems.Count);
-            var expectedItem = await homePage.GetProductNameAsync(rndIndex);
-            await homePage.ClickOnProductAsync(rndIndex);
-
-            var productPage = new ProductPage(Page);
-            await productPage.ClickAddToCartButtonAsync();
-            await homePage.ClickCartMenuItemAsync();
-
-            var cartPage = new CartPage(Page);
-            await cartPage.WaitForCartTableAsync();
-            var actualItem = await cartPage.GetCartItemNameAsync();
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+            var expectedItem = await ClickOnAnyRandomProductAsync();
+            await ClickAddToCartAsync();
+            await ClickOnCartAsync();
+            await AssertProductNames("Iphone 1");
         }
 
         [Test]
+        [AllureName("Test 1. Add product to cart")]
         public async Task Test1()
         {
-            var homePage = new HomePage(Page);
-            await homePage.WaitForHomePageLoadedAsync();
-            var inventoryItems = await homePage.GetProductCardsAsync();
-            var rndIndex = new Random().Next(inventoryItems.Count);
-            var expectedItem = await homePage.GetProductNameAsync(rndIndex);
-            await homePage.ClickOnProductAsync(rndIndex);
+            var expectedItem = await ClickOnAnyRandomProductAsync();
+            await ClickAddToCartAsync();
+            await ClickOnCartAsync();
+            await AssertProductNames(expectedItem);
+        }
 
-            var productPage = new ProductPage(Page);
-            await productPage.ClickAddToCartButtonAsync();
-            await homePage.ClickCartMenuItemAsync();
-
-            var cartPage = new CartPage(Page);
-            await cartPage.WaitForCartTableAsync();
-
-            var actualItem = await cartPage.GetCartItemNameAsync();
-            await Assertions.Expect(Page.Locator(cartPage._cartItemSelector)).ToHaveTextAsync(expectedItem);
+        [Test]
+        [AllureName("Test 2. Add product to cart")]
+        public async Task Test2()
+        {
+            var expectedItem = await ClickOnAnyRandomProductAsync();
+            await ClickAddToCartAsync();
+            await ClickOnCartAsync();
+            await AssertProductNames(expectedItem);
         }
     }
 }

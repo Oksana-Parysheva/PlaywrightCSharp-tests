@@ -1,4 +1,5 @@
 ﻿using Microsoft.Playwright;
+using POC.Playwright.Core.Controls;
 using System.Diagnostics;
 
 namespace POC.Playwright.Pages.OktaLogin
@@ -6,38 +7,40 @@ namespace POC.Playwright.Pages.OktaLogin
     public class OktaLoginPage
     {
         protected readonly IPage _page;
-        private string _usernameInputLocator = "input[autocomplete='username']";
-        private string _passwordInputLocator = "input[autocomplete='current-password']";
-        private string _signInButtonLocator = "input[value='Sign in']";
-        private string _selectSendPushButtonLocator = "a[aria-label='Select to get a push notification to the Okta Verify app.']";
+        public Textbox UsernameTextbox;
+        public Textbox PasswordTextbox;
+        public Button LoginButton;
+        public Link SelectSendPushLink;
 
         public OktaLoginPage(IPage page)
         {
             _page = page;
+            UsernameTextbox = new Textbox(_page.GetByRole(AriaRole.Textbox, new() { Name = "Enter 521 ID" }));
+            PasswordTextbox = new Textbox(_page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }));
+            LoginButton = new Button(_page.GetByRole(AriaRole.Button, new() { Name = "Sign in" }));
+            SelectSendPushLink = new Link(_page.GetByRole(AriaRole.Link, new() { Name = "Select to get a push" }));
         }
 
         public async Task SignInAsync(string username, string password)
         {
-            await _page.FillAsync(_usernameInputLocator, username);
-            await _page.FillAsync(_passwordInputLocator, password);
-            await _page.ClickAsync(_signInButtonLocator);
-            Thread.Sleep(2000);
+            await UsernameTextbox.EnterTextAsync(username);
+            await PasswordTextbox.EnterTextAsync(password);
+            await LoginButton.ClickAsync();
+            await Task.Delay(2000);
+
             // click Select to send push
-            if (await _page.Locator(_selectSendPushButtonLocator).IsVisibleAsync())
+            if (await SelectSendPushLink.IsVisibleAsync())
             {
-                await _page.ClickAsync(_selectSendPushButtonLocator);
+                await SelectSendPushLink.ClickAsync();
             }
 
-            Thread.Sleep(5000);
+            await Task.Delay(5000);
             //do
             //{
                 RunCmdCommandToTapButton();
             //}
             //while (await _page.Locator("span .caret").IsHiddenAsync());
         }
-
-        public async Task<bool> UsernameIsDisplayedAsync()
-            => await _page.Locator(_usernameInputLocator).IsVisibleAsync();
 
         public static void RunCmdCommandToTapButton()
         {
