@@ -14,4 +14,8 @@
     <Folder Include="AdiPlanner\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\POC.Playwright.Core\POC.Playwright.Core.csproj" />
+  </ItemGroup>
+
 </Project>

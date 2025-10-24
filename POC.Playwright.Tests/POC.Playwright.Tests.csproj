@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Allure.NUnit" Version="2.14.1" />
     <PackageReference Include="extent" Version="0.0.3" />
     <PackageReference Include="ExtentReports" Version="5.0.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
@@ -28,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\POC.Playwright.Core\POC.Playwright.Core.csproj" />
     <ProjectReference Include="..\POC.Playwright.Pages\POC.Playwright.Pages.csproj" />
+    <ProjectReference Include="..\POC.Playwright.Specflow.Tests\POC.Playwright.Specflow.Tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
